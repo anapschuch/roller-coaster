@@ -75,35 +75,27 @@ async function main() {
   scene.add(curveLine);
 
   let counter = 0;
-  let mustRotate = false;
-  let rotateTwice = false;
 
   function animateCar() {
     counter += 0.001;
-
     counter %= 1;
-    const p1 = curvePath.getPointAt(counter);
-    const p2 = curvePath.getPointAt((counter + 0.01) % 1);
 
-    car.position.set(p1.x, p1.y, p1.z);
-    car.lookAt(p2.x, p2.y, p2.z);
+    const newPos = curvePath.getPointAt(counter);
+    const pointInFront = curvePath.getPointAt((counter + 0.01) % 1);
 
-    const p3 = curvePath.getPointAt((counter - 0.01 + 1) % 1);
-    if (
-      ((p3.x > p1.x && p2.x > p1.x) || (p3.x < p1.x && p2.x < p1.x)) &&
-      Math.abs(p2.y - p3.y) > 2
-    ) {
-      if (!rotateTwice) {
-        console.log('a');
-        mustRotate = !mustRotate;
-        rotateTwice = true;
-      }
-    } else rotateTwice = false;
+    car.position.copy(newPos);
 
-    if (mustRotate) {
-      car.rotateX(-Math.PI);
-      car.rotateY(Math.PI);
-    }
+    const oldDir = new THREE.Vector3();
+    const newDir = new THREE.Vector3();
+
+    car.getWorldDirection(oldDir);
+    newDir.subVectors(pointInFront, car.position).normalize();
+
+    const theta = Math.acos(newDir.dot(oldDir));
+
+    const axis = new THREE.Vector3().crossVectors(oldDir, newDir).normalize();
+
+    car.rotateOnWorldAxis(axis, theta);
   }
 
   function animate() {
