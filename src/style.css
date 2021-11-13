@@ -23,6 +23,19 @@ canvas {
   left: 0;
 }
 
+#loading {
+  position: fixed;
+  width: fit-content;
+  height: fit-content;
+  inset: 0;
+  margin: auto;
+  font-size: 2em;
+  color: red;
+  border: 2px dashed red;
+  padding: .6em;
+  border-radius: .2em;
+}
+
 .floating-window {
   position: absolute;
   right: 30pt;
