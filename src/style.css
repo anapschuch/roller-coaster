@@ -1,0 +1,50 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+img,
+canvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  top: 0;
+  left: 0;
+}
+
+.floating-window {
+  position: absolute;
+  right: 30pt;
+  top: 30pt;
+  width: 300pt;
+  max-width: calc(100vw - 60pt);
+  padding: 10pt;
+  border-radius: 0.2em;
+  background: #3b3c5b82;
+  color: whitesmoke;
+  font-family: 'Courier New', Courier, monospace;
+  display: flex;
+  flex-direction: column;
+  gap: 5pt;
+  user-select: none;
+}
+
+.floating-window.hidden {
+  display: none;
+}
+
+.floating-window > h3 {
+  text-align: center;
+  margin: 5pt;
+}
