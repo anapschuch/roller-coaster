@@ -42,6 +42,7 @@ async function main() {
   ]);
 
   document.getElementById('loading').remove();
+  document.getElementById('instructions').classList.remove('hidden');
 
   const canvas = document.querySelector('canvas');
 
@@ -96,28 +97,35 @@ async function main() {
 
   const plane = new THREE.GridHelper(60, 10);
 
-  const light = new THREE.PointLight(0x00ff00);
-
   scene.add(plane);
   scene.add(car);
   scene.add(curveLine);
 
   let counter = 0;
 
-  const step = 0.001;
+  let speed = 0.0015;
+
+  const energy = speed ** 2 / 2;
+
+  const maxHeight = 14.52;
+  const speedAtTheTop = speed / 3
+
+  // Escolhemos o valor da gravidade a dedo para que a velocidade no ponto
+  // mais alto da pista seja a que desejamos :)
+  const gravity = (energy - speedAtTheTop ** 2 / 2) / maxHeight;
 
   function animateCar() {
-    counter += step;
+    counter += speed;
     counter %= 1;
 
     // counter ~ 0 (faixa de tolerância de meio passo)
-    if (counter >= 1 - step / 2 || counter <= step / 2) {
+    if (counter >= 1 - speed / 2 || counter <= speed / 2) {
       // Reset da rotação do carrinho para correção de erros numéricos
       car.rotation.set(0, 0, 0);
     }
 
     const newPos = curvePath.getPointAt(counter);
-    const pointInFront = curvePath.getPointAt((counter + 2 * step) % 1);
+    const pointInFront = curvePath.getPointAt((counter + 0.005) % 1);
 
     car.position.copy(newPos);
 
@@ -132,6 +140,10 @@ async function main() {
     const axis = new THREE.Vector3().crossVectors(oldDir, newDir).normalize();
 
     car.rotateOnWorldAxis(axis, theta);
+
+    const height = car.position.y;
+
+    speed = Math.sqrt(2 * (energy - gravity * height));
   }
 
   function animate() {
@@ -143,13 +155,47 @@ async function main() {
     currentView.update();
   }
 
-  window.addEventListener('keypress', e => {
-    switch (e.key) {
-      case '1': return view.set('global');
-      case '2': return view.set('car');
-      case '3': return view.set('drone');
-    }
-  });
+  const isTouch = 'ontouchstart' in window;
+
+  if (isTouch) {
+    const instructions = document.getElementById('instructions');
+    instructions.innerHTML = '<h3>Câmeras</h3>';
+
+    instructions.style.width = '110pt';
+
+    const elements = [
+      ['global', 'Global'],
+      ['car', 'Carro'],
+      ['drone', 'Drone']
+    ].map(([id, name]) => {
+      const div = document.createElement('div');
+
+      const span = document.createElement('span');
+      span.innerText = name;
+      span.style.marginRight = '.6rem';
+
+      const button = document.createElement('button');
+      button.addEventListener('click', () => view.set(id));
+      button.innerText = '\xa0';
+
+      div.style.textAlign = 'center';
+
+      div.append(span, button);
+
+      return div;
+    });
+
+    instructions.append(...elements);
+  }
+  else {
+    window.addEventListener('keypress', e => {
+      switch (e.key) {
+        case '1': return view.set('global');
+        case '2': return view.set('car');
+        case '3': return view.set('drone');
+      }
+    });
+  }
 
   animate();
 }
