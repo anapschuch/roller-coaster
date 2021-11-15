@@ -70,21 +70,4 @@ auxGeo2.rotateX(Math.PI);
 auxGeo2.translateZ(0.6);
 car.add(auxGeo2);
 
-let z = car.position.z;
-
-Object.defineProperty(car.position, 'z', {
-  set(newZ) {
-    const delta = newZ - z;
-
-    if (delta) {
-      for (const wheel of wheels) {
-        wheel.rotateZ(delta / 2);
-      }
-
-      z = newZ;
-    }
-  },
-  get: () => z
-});
-
 export default car;

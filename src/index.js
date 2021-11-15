@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import * as views from './views';
 import car from './car';
 
 if (import.meta.env.PROD) {
@@ -45,28 +45,49 @@ async function main() {
 
   const canvas = document.querySelector('canvas');
 
-  const camera = new THREE.PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight
-  );
-
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     canvas: canvas,
     alpha: true
   });
 
-  function setView() {
+  const view = (() => {
+    const loadedViews = {
+      car: new views.CarView(car),
+      global: new views.GlobalView(scene)
+    };
+
+    let current = loadedViews.global.activate();
+
+    return {
+      get: () => current,
+      /**@param {keyof typeof loadedViews} id */
+      set(id) {
+        const $new = loadedViews[id];
+        if (current === $new) return;
+
+        current.deactivate();
+        current = $new.activate();
+      }
+    }
+  })();
+
+  function updateViewport() {
     // Definição do tamanho da vista
+    const { camera } = view.get();
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
   }
 
-  setView();
-  window.addEventListener('resize', setView);
+  updateViewport();
 
-  const controls = new OrbitControls(camera, renderer.domElement);
+  if (window.ResizeObserver) {
+    new ResizeObserver(updateViewport).observe(document.body);
+  }
+  else {
+    window.addEventListener('resize', updateViewport);
+  }
 
   const plane = new THREE.GridHelper(60, 10);
 
@@ -99,17 +120,22 @@ async function main() {
   }
 
   function animate() {
-    renderer.render(scene, camera);
+    const currentView = view.get();
+
+    renderer.render(scene, currentView.camera);
     requestAnimationFrame(animate);
-    controls.update();
+    currentView.update();
     animateCar();
   }
 
-  animate();
+  window.addEventListener('keypress', e => {
+    switch (e.key) {
+      case '1': return view.set('global');
+      case '2': return view.set('car');
+    }
+  });
 
-  camera.position.x = 0;
-  camera.position.y = 20;
-  camera.position.z = -25;
+  animate();
 }
 
 main();

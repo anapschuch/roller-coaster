@@ -23,28 +23,44 @@ canvas {
   left: 0;
 }
 
-#loading {
+#loading, .lock-click-hint {
+  pointer-events: none;
   position: fixed;
   width: fit-content;
   height: fit-content;
   inset: 0;
   margin: auto;
-  font-size: 2em;
-  color: red;
-  border: 2px dashed red;
   padding: .6em;
   border-radius: .2em;
+  border: 2px dashed;
+}
+
+#loading {
+  font-size: 2em;
+  color: red;
+  border-color: red;
+}
+
+.lock-click-hint {
+  font-size: 1.5em;
+  color: black;
+  border-color: black;
+  transition: opacity .6s ease-in-out;
+}
+
+.lock-click-hint.hidden {
+  opacity: 0;
 }
 
 .floating-window {
   position: absolute;
   right: 30pt;
   top: 30pt;
-  width: 300pt;
+  width: 200pt;
   max-width: calc(100vw - 60pt);
   padding: 10pt;
   border-radius: 0.2em;
-  background: #3b3c5b82;
+  background: #3b0a0182;
   color: whitesmoke;
   font-family: 'Courier New', Courier, monospace;
   display: flex;
