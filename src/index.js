@@ -96,18 +96,28 @@ async function main() {
 
   const plane = new THREE.GridHelper(60, 10);
 
+  const light = new THREE.PointLight(0x00ff00);
+
   scene.add(plane);
   scene.add(car);
   scene.add(curveLine);
 
   let counter = 0;
 
+  const step = 0.001;
+
   function animateCar() {
-    counter += 0.001;
+    counter += step;
     counter %= 1;
 
+    // counter ~ 0 (faixa de tolerância de meio passo)
+    if (counter >= 1 - step / 2 || counter <= step / 2) {
+      // Reset da rotação do carrinho para correção de erros numéricos
+      car.rotation.set(0, 0, 0);
+    }
+
     const newPos = curvePath.getPointAt(counter);
-    const pointInFront = curvePath.getPointAt((counter + 0.01) % 1);
+    const pointInFront = curvePath.getPointAt((counter + 2 * step) % 1);
 
     car.position.copy(newPos);
 
