@@ -11,7 +11,7 @@ export default class GlobalView extends BaseView {
 
     const element = document.querySelector('canvas');
 
-    this.camera.position.set(0, 20, -25);
+    this.camera.position.set(0, 25, -30);
 
     this.controls = new OrbitControls(this.camera, element);
 

@@ -54,7 +54,8 @@ async function main() {
   const view = (() => {
     const loadedViews = {
       car: new views.CarView(car),
-      global: new views.GlobalView(scene)
+      global: new views.GlobalView(scene),
+      drone: new views.DroneView(scene, car),
     };
 
     let current = loadedViews.global.activate();
@@ -68,6 +69,10 @@ async function main() {
 
         current.deactivate();
         current = $new.activate();
+
+        updateViewport();
+
+        return current;
       }
     }
   })();
@@ -124,14 +129,15 @@ async function main() {
 
     renderer.render(scene, currentView.camera);
     requestAnimationFrame(animate);
-    currentView.update();
     animateCar();
+    currentView.update();
   }
 
   window.addEventListener('keypress', e => {
     switch (e.key) {
       case '1': return view.set('global');
       case '2': return view.set('car');
+      case '3': return view.set('drone');
     }
   });
 
