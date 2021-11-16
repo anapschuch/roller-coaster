@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 const params = {
   roughness: 0.0,
-  metalness: 2.0,
+  metalness: 1.0,
   envMapIntensity: 1.0,
 };
 

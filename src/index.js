@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import * as views from './views';
 import car from './car';
-import { TextureLoader } from 'three';
 
 if (import.meta.env.PROD) {
   // Ignorar todos os console.log no build final
@@ -47,7 +46,9 @@ async function main() {
           linewidth: 1,
         });
 
-        return new THREE.Line(curveGeometry, material);
+        const geo = new THREE.Line(curveGeometry, material);
+        geo.castShadow = true;
+        return geo;
       }),
       cubeLoader.loadAsync([
         '/background_right.png',
@@ -71,6 +72,7 @@ async function main() {
     canvas: canvas,
     alpha: true,
   });
+  renderer.shadowMap.enabled = true;
 
   const view = (() => {
     const loadedViews = {
@@ -113,24 +115,35 @@ async function main() {
   } else {
     window.addEventListener('resize', updateViewport);
   }
-
-  console.log(car);
   car.traverse((child) => {
     if (child instanceof THREE.Mesh) {
+      child.castShadow = true;
       child.material.envMap = backgroundCube;
       child.needsUpdate = true;
     }
   });
+  car.castShadow = true;
 
-  const geometry = new THREE.PlaneGeometry(1000, 1000);
-  const material = new THREE.MeshBasicMaterial({
-    map: sandTexture,
-  });
-  const plane = new THREE.Mesh(geometry, material);
-  plane.rotateX((3 * Math.PI) / 2);
+  const light = new THREE.SpotLight(0xffffff, 1);
+  const helper = new THREE.SpotLightHelper(light);
+  light.position.set(60, 200, -110); //default; light shining from top
+  light.castShadow = true; // default false
+  scene.add(light);
+  scene.add(helper);
+
+  light.shadow.mapSize.width = 10240; // default
+  light.shadow.mapSize.height = 10240; // default
+  light.shadow.camera.near = 0.5; // default
+  light.shadow.camera.far = 50000; // default
+
+  const planeGeometry = new THREE.PlaneGeometry(1000, 1000, 32, 32);
+  const planeMaterial = new THREE.MeshStandardMaterial({ map: sandTexture });
+  const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+
+  plane.rotateX(-Math.PI / 2);
+  plane.receiveShadow = true;
   scene.add(plane);
 
-  scene.add(plane);
   scene.add(car);
   scene.add(curveLine);
   scene.background = backgroundCube;
