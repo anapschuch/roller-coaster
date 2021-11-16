@@ -132,7 +132,7 @@ async function main() {
   light2.position.set(160, 600, -310);
   light.castShadow = true; // default false
   scene.add(light);
-  scene.add(helper);
+  //scene.add(helper);
 
   light.shadow.mapSize.width = 10240; // default
   light.shadow.mapSize.height = 1000240; // default
