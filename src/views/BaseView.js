@@ -5,7 +5,12 @@ export default class BaseCamera {
    * @param {THREE.Group} group
    */
   constructor(group) {
-    this.camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight);
+    this.camera = new THREE.PerspectiveCamera(
+      75,
+      innerWidth / innerHeight,
+      0.1,
+      270
+    );
 
     group.add(this.camera);
 
