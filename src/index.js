@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import * as views from './views';
 import car from './car';
+import { TextureLoader } from 'three';
 
 if (import.meta.env.PROD) {
   // Ignorar todos os console.log no build final
@@ -13,48 +14,52 @@ if (import.meta.env.PROD) {
 const scene = new THREE.Scene();
 
 const loader = new OBJLoader();
+const textureLoader = new THREE.TextureLoader();
 const cubeLoader = new THREE.CubeTextureLoader();
 
 async function main() {
   // Primeiro, esperamos que todos os objetos sejam carregados
-  const [curvePath, curveLine, backgroundCube] = await Promise.all([
-    loader.loadAsync('/roller-coaster-curve.obj').then((object) => {
-      const curveGeometry = object.children[0].geometry;
-      console.log(curveGeometry);
-      const coordinates = curveGeometry.getAttribute('position');
-      console.log(coordinates);
-      const points = [];
+  const [curvePath, curveLine, backgroundCube, sandTexture] = await Promise.all(
+    [
+      loader.loadAsync('/roller-coaster-curve.obj').then((object) => {
+        const curveGeometry = object.children[0].geometry;
+        console.log(curveGeometry);
+        const coordinates = curveGeometry.getAttribute('position');
+        console.log(coordinates);
+        const points = [];
 
-      for (let i = 0; i < 3 * coordinates.count; i += 3) {
-        points.push(
-          new THREE.Vector3(
-            coordinates.array[i],
-            coordinates.array[i + 1],
-            coordinates.array[i + 2]
-          )
-        );
-      }
-      return new THREE.CatmullRomCurve3(points);
-    }),
-    loader.loadAsync('/roller-coaster.obj').then((object) => {
-      console.log(object);
-      const curveGeometry = object.children[0].geometry;
-      const material = new THREE.LineBasicMaterial({
-        color: 0xff7f00,
-        linewidth: 1,
-      });
+        for (let i = 0; i < 3 * coordinates.count; i += 3) {
+          points.push(
+            new THREE.Vector3(
+              coordinates.array[i],
+              coordinates.array[i + 1],
+              coordinates.array[i + 2]
+            )
+          );
+        }
+        return new THREE.CatmullRomCurve3(points);
+      }),
+      loader.loadAsync('/roller-coaster.obj').then((object) => {
+        console.log(object);
+        const curveGeometry = object.children[0].geometry;
+        const material = new THREE.LineBasicMaterial({
+          color: 0xff7f00,
+          linewidth: 1,
+        });
 
-      return new THREE.Line(curveGeometry, material);
-    }),
-    cubeLoader.loadAsync([
-      '/background_right.png',
-      '/background_left.png',
-      '/background_up.png',
-      '/background_down.png',
-      '/background_front.png',
-      '/background_back.png',
-    ]),
-  ]);
+        return new THREE.Line(curveGeometry, material);
+      }),
+      cubeLoader.loadAsync([
+        '/background_right.png',
+        '/background_left.png',
+        '/background_up.png',
+        '/background_down.png',
+        '/background_front.png',
+        '/background_back.png',
+      ]),
+      textureLoader.loadAsync('/background_down.png'),
+    ]
+  );
 
   document.getElementById('loading').remove();
   document.getElementById('instructions').classList.remove('hidden');
@@ -109,17 +114,26 @@ async function main() {
     window.addEventListener('resize', updateViewport);
   }
 
-  const plane = new THREE.GridHelper(60, 10);
+  console.log(car);
+  car.traverse((child) => {
+    if (child instanceof THREE.Mesh) {
+      child.material.envMap = backgroundCube;
+      child.needsUpdate = true;
+    }
+  });
+
+  const geometry = new THREE.PlaneGeometry(1000, 1000);
+  const material = new THREE.MeshBasicMaterial({
+    map: sandTexture,
+  });
+  const plane = new THREE.Mesh(geometry, material);
+  plane.rotateX((3 * Math.PI) / 2);
+  scene.add(plane);
 
   scene.add(plane);
   scene.add(car);
-
-  curveLine.material.envMap = backgroundCube;
-  curveLine.material.needsUpdate = true;
-
   scene.add(curveLine);
   scene.background = backgroundCube;
-  console.log(backgroundCube);
 
   let counter = 0;
 

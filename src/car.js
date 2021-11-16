@@ -1,14 +1,23 @@
 import * as THREE from 'three';
 
+const params = {
+  roughness: 0.0,
+  metalness: 2.0,
+  envMapIntensity: 1.0,
+};
+
 // criação do grupo que será futuramente um carrinho
 const car = new THREE.Group();
-const material = new THREE.MeshPhongMaterial({
+const material = new THREE.MeshStandardMaterial({
   color: 0x3366ff,
-  wireframe: false
+  wireframe: false,
+  ...params,
 });
-const material2 = new THREE.MeshPhongMaterial({
+
+const material2 = new THREE.MeshStandardMaterial({
   color: 0x00b300,
-  wireframe: false
+  wireframe: false,
+  ...params,
 });
 
 // rodas
@@ -21,7 +30,7 @@ const wheelPositions = [
   [1 - 1 / 3, -0.55 + 1 / 6],
   [1 - 1 / 3, 0.55 - 1 / 6],
   [-1 + 1 / 3, -0.55 + 1 / 6],
-  [-1 + 1 / 3, 0.55 - 1 / 6]
+  [-1 + 1 / 3, 0.55 - 1 / 6],
 ];
 
 /**@type {THREE.Mesh[]} */
