@@ -124,15 +124,18 @@ async function main() {
   });
   car.castShadow = true;
 
-  const light = new THREE.SpotLight(0xffffff, 1);
+  const light = new THREE.SpotLight(0xe6ac00, 0.4);
   const helper = new THREE.SpotLightHelper(light);
-  light.position.set(60, 200, -110); //default; light shining from top
+  const light2 = new THREE.SpotLight(0xffffff, 1);
+  scene.add( light2);
+  light.position.set(0, 120, -110); //default; light shining from top
+  light2.position.set(160, 600, -310);
   light.castShadow = true; // default false
   scene.add(light);
   scene.add(helper);
 
   light.shadow.mapSize.width = 10240; // default
-  light.shadow.mapSize.height = 10240; // default
+  light.shadow.mapSize.height = 1000240; // default
   light.shadow.camera.near = 0.5; // default
   light.shadow.camera.far = 50000; // default
 
