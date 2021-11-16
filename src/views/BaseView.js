@@ -9,7 +9,7 @@ export default class BaseCamera {
       75,
       innerWidth / innerHeight,
       0.1,
-      270
+      260
     );
 
     group.add(this.camera);
