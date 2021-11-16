@@ -149,11 +149,13 @@ async function main() {
   const gravity = (energy - speedAtTheTop ** 2 / 2) / maxHeight;
 
   function animateCar() {
+    const previousCounter = counter;
+
     counter += speed;
     counter %= 1;
 
     // counter ~ 0 (faixa de tolerância de meio passo)
-    if (counter >= 1 - speed / 2 || counter <= speed / 2) {
+    if (previousCounter > 0.5 && counter < 0.5) {
       // Reset da rotação do carrinho para correção de erros numéricos
       car.rotation.set(0, 0, 0);
     }
