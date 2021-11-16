@@ -5,17 +5,20 @@ import car from './car';
 
 if (import.meta.env.PROD) {
   // Ignorar todos os console.log no build final
-  console.log = () => { /* ignore */ };
+  console.log = () => {
+    /* ignore */
+  };
 }
 
 const scene = new THREE.Scene();
 
 const loader = new OBJLoader();
+const cubeLoader = new THREE.CubeTextureLoader();
 
 async function main() {
   // Primeiro, esperamos que todos os objetos sejam carregados
-  const [curvePath, curveLine] = await Promise.all([
-    loader.loadAsync('/roller-coaster-curve.obj').then(object => {
+  const [curvePath, curveLine, backgroundCube] = await Promise.all([
+    loader.loadAsync('/roller-coaster-curve.obj').then((object) => {
       const curveGeometry = object.children[0].geometry;
       console.log(curveGeometry);
       const coordinates = curveGeometry.getAttribute('position');
@@ -33,12 +36,24 @@ async function main() {
       }
       return new THREE.CatmullRomCurve3(points);
     }),
-    loader.loadAsync('/roller-coaster.obj').then(object => {
+    loader.loadAsync('/roller-coaster.obj').then((object) => {
+      console.log(object);
       const curveGeometry = object.children[0].geometry;
-      const material = new THREE.LineBasicMaterial({ color: 0xff0000 });
+      const material = new THREE.LineBasicMaterial({
+        color: 0xff7f00,
+        linewidth: 1,
+      });
 
       return new THREE.Line(curveGeometry, material);
-    })
+    }),
+    cubeLoader.loadAsync([
+      '/background_right.png',
+      '/background_left.png',
+      '/background_up.png',
+      '/background_down.png',
+      '/background_front.png',
+      '/background_back.png',
+    ]),
   ]);
 
   document.getElementById('loading').remove();
@@ -49,7 +64,7 @@ async function main() {
   const renderer = new THREE.WebGLRenderer({
     antialias: true,
     canvas: canvas,
-    alpha: true
+    alpha: true,
   });
 
   const view = (() => {
@@ -74,8 +89,8 @@ async function main() {
         updateViewport();
 
         return current;
-      }
-    }
+      },
+    };
   })();
 
   function updateViewport() {
@@ -90,8 +105,7 @@ async function main() {
 
   if (window.ResizeObserver) {
     new ResizeObserver(updateViewport).observe(document.body);
-  }
-  else {
+  } else {
     window.addEventListener('resize', updateViewport);
   }
 
@@ -99,7 +113,13 @@ async function main() {
 
   scene.add(plane);
   scene.add(car);
+
+  curveLine.material.envMap = backgroundCube;
+  curveLine.material.needsUpdate = true;
+
   scene.add(curveLine);
+  scene.background = backgroundCube;
+  console.log(backgroundCube);
 
   let counter = 0;
 
@@ -108,7 +128,7 @@ async function main() {
   const energy = speed ** 2 / 2;
 
   const maxHeight = 14.52;
-  const speedAtTheTop = speed / 3
+  const speedAtTheTop = speed / 3;
 
   // Escolhemos o valor da gravidade a dedo para que a velocidade no ponto
   // mais alto da pista seja a que desejamos :)
@@ -166,7 +186,7 @@ async function main() {
     const elements = [
       ['global', 'Global'],
       ['car', 'Carro'],
-      ['drone', 'Drone']
+      ['drone', 'Drone'],
     ].map(([id, name]) => {
       const div = document.createElement('div');
 
@@ -186,13 +206,15 @@ async function main() {
     });
 
     instructions.append(...elements);
-  }
-  else {
-    window.addEventListener('keypress', e => {
+  } else {
+    window.addEventListener('keypress', (e) => {
       switch (e.key) {
-        case '1': return view.set('global');
-        case '2': return view.set('car');
-        case '3': return view.set('drone');
+        case '1':
+          return view.set('global');
+        case '2':
+          return view.set('car');
+        case '3':
+          return view.set('drone');
       }
     });
   }
