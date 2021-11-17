@@ -11,3 +11,33 @@ Grupo:
 -   Pedro Freitas
 
 Link: https://roller-coaster.vercel.app/
+
+O projeto consiste de um carrinho que percorre automaticamente uma trilha de montanha-russa.
+
+![image](https://user-images.githubusercontent.com/48722002/142260434-a537ce5c-d2c7-4cf9-99b9-d32164656c82.png)
+
+Tanto o carrinho quanto os planos de fundo receberam um `envMap` com o ambiente de deserto utilizado, para garantir que o efeito metálico refletisse corretamente as imagens no horizonte e que as câmeras possam observar o cenário de forma coerente.
+
+Existe uma `SpotLight` em uma posição específica que simula o efeito do sol localizado na imagem de fundo. Essa luz também gera sombras próprias aos objetos
+
+O trabalho possui três opções de câmeras diferentes:
+
+- Ao pressionar a tecla `1`, se tem uma visão distante e estática da montanha-russa. É possível arrastar o mouse com o botão esquerdo, para mover a câmera ao redor do diorama.
+
+- Ao pressionar a tecla `2`, se tem uma visão em primeira pessoa do carrinho. É possível travar a camêra ao cursor ao clicar com o botão esquerdo do mouse, e mover a visão em qualquer direção a partir do ponto onde o carrinho está.
+
+- Ao pressionar a tecla `3`, se tem uma cÂmera mais próxima focada no carrinho e que se move junto a ele.
+
+## Rodar Localmente
+
+Faça o clone do repositório e instale as dependências necessárias com o comando:
+
+```bash
+$ npm install
+```
+
+Por fim, o comando abaixo roda a aplicação:
+
+```bash
+$ npm run dev
+```
