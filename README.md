@@ -26,7 +26,7 @@ O trabalho possui três opções de câmeras diferentes:
 
 - Ao pressionar a tecla `2`, se tem uma visão em primeira pessoa do carrinho. É possível travar a camêra ao cursor ao clicar com o botão esquerdo do mouse, e mover a visão em qualquer direção a partir do ponto onde o carrinho está.
 
-- Ao pressionar a tecla `3`, se tem uma cÂmera mais próxima focada no carrinho e que se move junto a ele.
+- Ao pressionar a tecla `3`, se tem uma câmera mais próxima focada no carrinho e que se move junto a ele.
 
 ## Rodar Localmente
 
