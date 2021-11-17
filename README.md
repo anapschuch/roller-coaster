@@ -32,6 +32,8 @@ O trabalho possui três opções de câmeras diferentes:
 
 ![image](https://user-images.githubusercontent.com/48722002/142262141-ded8b78f-f688-461d-90d4-e2d47219216d.png)
 
+O percurso da montanha russa foi desenhado com auxílio do software Blender. Dois arquivos são utilizados no projeto, um que contém apenas a curva (roller-coaster-curve.obj), e outro com a estrutura (roller-coaster.obj). Para alterar o formato da montanha russa, é suficiente modificar estes dois arquivos.
+
 ## Rodar Localmente
 
 Faça o clone do repositório e instale as dependências necessárias com o comando:
